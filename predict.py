@@ -2,6 +2,10 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import transformers
 import torch
 import time
+import logging
+from cog import BasePredictor, Input, Path
+from typing import Optional, Any
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
@@ -10,7 +14,7 @@ logger.setLevel(logging.INFO)
 
 class Predictor(BasePredictor):
     def setup(self, weights: Optional[Path] = None):
-        model = "tiiuae/falcon-180b"
+        model = "tiiuae/falcon-7b-instruct"
         start = time.time()
         self.tokenizer = AutoTokenizer.from_pretrained(model)
         self.pipeline = transformers.pipeline(
@@ -50,9 +54,9 @@ class Predictor(BasePredictor):
             description="Valid if you choose top_k decoding. The number of highest probability vocabulary tokens to keep for top-k-filtering",
             default=50,
         ),
-    ):
+    ) -> Any:
         start = time.time()
-        sequences = pipeline(
+        sequences = self.pipeline(
            prompt,
            max_length=max_length,
            do_sample=True,
@@ -61,6 +65,4 @@ class Predictor(BasePredictor):
            eos_token_id=self.tokenizer.eos_token_id,
         )
         logger.info(f"Inference took {time.time() - start} seconds")
-        return [text["generated_text"] for text in sequences].join("")
-        
-
+        return "".join([text["generated_text"] for text in sequences])

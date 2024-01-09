@@ -17,6 +17,8 @@ build:
     - "tensorizer==1.0.1"
     - "jinja2==3.1.2"
     - "huggingface_hub==0.13.4"
+    - "accelerate"
 
 # predict.py defines how predictions are run on your model
 predict: "predict.py:Predictor"
+

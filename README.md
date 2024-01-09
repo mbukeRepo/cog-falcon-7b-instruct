@@ -6,5 +6,5 @@ model.
 ## Inferencing with cog
 
 ```bash
-
+cog predict -i prompt="What is a meme, and what's the history behind this word?"
 ```
